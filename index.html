@@ -1,0 +1,2157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#2196F3" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>MoneyMemo</title>
+<style>
+/* ===== Reset & Base ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --clr-primary: #2196F3;
+  --clr-primary-light: #64B5F6;
+  --clr-primary-dark: #1565C0;
+  --clr-primary-gradient: linear-gradient(135deg, #42A5F5 0%, #1976D2 100%);
+  --clr-danger: #ef4444;
+  --clr-danger-dark: #dc2626;
+  --clr-danger-bg: #fef2f2;
+  --clr-success: #16a34a;
+  --clr-success-bg: #f0fdf4;
+  --clr-bg: #f5f7fa;
+  --clr-card: #ffffff;
+  --clr-text: #1a2b4a;
+  --clr-muted: #7b8ca6;
+  --clr-border: #e8ecf1;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 20px rgba(33, 150, 243, 0.1);
+  --shadow-lg: 0 8px 32px rgba(33, 150, 243, 0.15);
+  --transition: 0.25s cubic-bezier(.4,0,.2,1);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  min-height: 100vh;
+  min-height: 100dvh;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: contain;
+}
+
+/* ===== App Header ===== */
+.app-header {
+  background: var(--clr-primary-gradient);
+  color: #fff;
+  text-align: center;
+  padding: 28px 16px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(33, 150, 243, 0.3);
+  border-radius: 0 0 24px 24px;
+}
+
+.app-header h1 {
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+}
+
+.app-tagline {
+  font-size: 0.8rem;
+  opacity: 0.75;
+  margin-top: 2px;
+  font-weight: 400;
+}
+
+/* ===== Summary Bar ===== */
+.summary-bar {
+  display: flex;
+  align-items: center;
+  background: var(--clr-card);
+  margin: 12px 16px 0;
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  box-shadow: var(--shadow);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.summary-item {
+  flex: 1;
+  text-align: center;
+}
+
+.summary-label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--clr-muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.summary-value {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.summary-divider {
+  width: 1px;
+  height: 36px;
+  background: var(--clr-border);
+  margin: 0 12px;
+  flex-shrink: 0;
+}
+
+/* ===== Add Profile Section ===== */
+.add-profile-section {
+  display: flex;
+  gap: 10px;
+  padding: 14px 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.add-profile-section input {
+  flex: 1;
+  padding: 14px 16px;
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  outline: none;
+  transition: border var(--transition), box-shadow var(--transition);
+  background: var(--clr-card);
+}
+
+.add-profile-section input:focus {
+  border-color: var(--clr-primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+/* ===== Buttons ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius);
+  padding: 14px 22px;
+  transition: background var(--transition), transform 0.1s, box-shadow var(--transition);
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.btn-primary {
+  background: var(--clr-primary-gradient);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(33, 150, 243, 0.3);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+}
+
+.btn-block {
+  width: 100%;
+  padding: 16px;
+  font-size: 1rem;
+}
+
+.btn-danger {
+  background: var(--clr-danger);
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: var(--clr-danger-dark);
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  border-radius: 8px;
+}
+
+.btn-outline {
+  background: var(--clr-card);
+  color: var(--clr-primary);
+  border: 1.5px solid var(--clr-primary-light);
+  font-weight: 600;
+}
+
+.btn-outline:hover {
+  background: rgba(33, 150, 243, 0.08);
+}
+
+/* ===== Data Management Bar ===== */
+.data-bar {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 0 16px 10px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #fff;
+  padding: 4px 8px;
+  margin-right: 8px;
+  border-radius: 8px;
+  transition: background var(--transition);
+  touch-action: manipulation;
+}
+
+.btn-back:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ===== Dashboard ===== */
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding: 12px 16px 100px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.dashboard-empty {
+  text-align: center;
+  color: var(--clr-muted);
+  padding: 60px 16px;
+  font-size: 1rem;
+}
+
+.dashboard-empty .empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 12px;
+  opacity: 0.4;
+}
+
+/* ===== Profile Card ===== */
+.profile-card {
+  background: var(--clr-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: fadeUp 0.4s cubic-bezier(.4,0,.2,1) both;
+  transition: box-shadow var(--transition), transform var(--transition);
+  cursor: pointer;
+  touch-action: manipulation;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+.profile-card:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.profile-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.profile-card .info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-card .name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-card .balance {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+.balance.positive { color: var(--clr-success); }
+.balance.negative { color: var(--clr-danger); }
+.balance.zero     { color: var(--clr-muted); }
+
+.profile-card .card-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: background var(--transition), transform 0.1s;
+  touch-action: manipulation;
+}
+
+.icon-btn:active { transform: scale(0.88); }
+
+.icon-btn.delete {
+  background: var(--clr-danger-bg);
+  color: var(--clr-danger);
+}
+
+.icon-btn.delete:hover {
+  background: var(--clr-danger);
+  color: #fff;
+}
+
+/* ===== Modal ===== */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--clr-bg);
+  display: flex;
+  flex-direction: column;
+  transition: opacity 0.3s;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  animation: slideIn 0.3s cubic-bezier(.4,0,.2,1);
+}
+
+@keyframes slideIn {
+  from { transform: translateX(40px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 16px;
+  background: var(--clr-primary-gradient);
+  color: #fff;
+  gap: 4px;
+}
+
+.modal-header h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modal-balance {
+  font-size: 1.1rem;
+  font-weight: 800;
+  white-space: nowrap;
+  padding: 5px 14px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--clr-primary-dark);
+}
+
+/* ===== Transaction List ===== */
+.txn-list-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.txn-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.txn-card {
+  background: var(--clr-card);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.03);
+  animation: fadeUp 0.3s cubic-bezier(.4,0,.2,1) both;
+}
+
+.txn-type-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.txn-type-dot.sent     { background: var(--clr-danger); }
+.txn-type-dot.received { background: var(--clr-success); }
+
+.txn-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.txn-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.txn-type-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.txn-type-label.sent     { color: var(--clr-danger); }
+.txn-type-label.received { color: var(--clr-success); }
+
+.txn-amount {
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.txn-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3px;
+  font-size: 0.78rem;
+  color: var(--clr-muted);
+}
+
+.txn-note {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+
+.txn-delete-btn {
+  background: none;
+  border: none;
+  color: var(--clr-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: color var(--transition), background var(--transition);
+  flex-shrink: 0;
+  touch-action: manipulation;
+}
+
+.txn-delete-btn:active {
+  color: var(--clr-danger);
+  background: var(--clr-danger-bg);
+}
+
+.no-transactions {
+  text-align: center;
+  color: var(--clr-muted);
+  padding: 50px 0;
+  font-size: 0.95rem;
+}
+
+.no-transactions .empty-txn-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 8px;
+  opacity: 0.35;
+}
+
+/* ===== Transaction Form ===== */
+.transaction-form {
+  padding: 14px 16px;
+  padding-bottom: calc(14px + var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid var(--clr-border);
+  background: var(--clr-card);
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-group label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--clr-muted);
+}
+
+.type-group  { flex: 0 0 110px; }
+.amount-group { flex: 1; }
+
+.transaction-form select,
+.transaction-form input[type="text"],
+.transaction-form input[type="number"],
+.transaction-form input[type="date"],
+.transaction-form input[inputmode="numeric"] {
+  padding: 12px 14px;
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  outline: none;
+  width: 100%;
+  transition: border var(--transition), box-shadow var(--transition);
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  -webkit-appearance: none;
+}
+
+.transaction-form select:focus,
+.transaction-form input:focus {
+  border-color: var(--clr-primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+  background: #fff;
+}
+
+/* ===== Success Popup ===== */
+.success-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: popupFadeIn 0.25s ease;
+}
+
+.success-popup.hidden {
+  display: none;
+}
+
+@keyframes popupFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.success-popup-card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 36px 32px;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  animation: popupBounce 0.4s cubic-bezier(.34,1.56,.64,1);
+  max-width: 300px;
+  width: 85%;
+}
+
+@keyframes popupBounce {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--clr-success-bg);
+  color: var(--clr-success);
+  font-size: 2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  border: 3px solid var(--clr-success);
+}
+
+.success-popup-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--clr-text);
+}
+
+.success-popup-card p {
+  font-size: 0.88rem;
+  color: var(--clr-muted);
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--clr-text);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 999;
+  text-align: center;
+  max-width: 85vw;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ===== Loader ===== */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader.hidden { display: none; }
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(33, 150, 243, 0.15);
+  border-top-color: var(--clr-primary);
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== Responsive ===== */
+@media (min-width: 600px) {
+  .dashboard {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .modal-content {
+    max-height: 90vh;
+  }
+}
+
+/* ===== Color Utilities ===== */
+.positive { color: var(--clr-success) !important; }
+.negative { color: var(--clr-danger)  !important; }
+.zero     { color: var(--clr-muted)   !important; }
+
+/* ===== Dark Mode ===== */
+body.dark-mode {
+  --clr-bg: #0f172a;
+  --clr-card: #1e293b;
+  --clr-text: #e2e8f0;
+  --clr-muted: #94a3b8;
+  --clr-border: #334155;
+  --clr-danger-bg: #3b1c1c;
+  --clr-success-bg: #1a2e1a;
+}
+body.dark-mode .success-popup-card { background: var(--clr-card); }
+body.dark-mode .modal-balance { background: rgba(30,41,59,0.95); color: var(--clr-primary-light); }
+
+/* ===== Dark Mode Toggle ===== */
+.theme-toggle {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  font-size: 1.3rem;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition);
+  touch-action: manipulation;
+}
+.theme-toggle:active { background: rgba(255,255,255,0.35); }
+
+/* ===== Net Balance in Summary ===== */
+.summary-net {
+  text-align: center;
+  padding: 0 16px 4px;
+  max-width: 600px;
+  margin: 6px auto 0;
+  font-size: 0.82rem;
+  color: var(--clr-muted);
+  font-weight: 600;
+}
+.summary-net span { font-weight: 800; }
+
+/* ===== Search & Filter Bar ===== */
+.search-filter-bar {
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px 4px;
+  max-width: 600px;
+  margin: 0 auto;
+  align-items: center;
+}
+.search-filter-bar input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  outline: none;
+  background: var(--clr-card);
+  color: var(--clr-text);
+  transition: border var(--transition);
+}
+.search-filter-bar input:focus { border-color: var(--clr-primary); }
+.search-filter-bar select {
+  padding: 10px 12px;
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  outline: none;
+  background: var(--clr-card);
+  color: var(--clr-text);
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+.sort-btn {
+  padding: 10px 12px;
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  background: var(--clr-card);
+  color: var(--clr-text);
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border var(--transition);
+  touch-action: manipulation;
+}
+.sort-btn:active { border-color: var(--clr-primary); }
+
+/* ===== Settle Up Button ===== */
+.settle-btn {
+  background: rgba(255,255,255,0.2);
+  border: 1.5px solid rgba(255,255,255,0.4);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background var(--transition);
+  touch-action: manipulation;
+}
+.settle-btn:active { background: rgba(255,255,255,0.35); }
+
+/* ===== Edit Modal ===== */
+.edit-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: popupFadeIn 0.2s ease;
+}
+.edit-overlay.hidden { display: none; }
+.edit-card {
+  background: var(--clr-card);
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  box-shadow: var(--shadow-lg);
+  max-width: 340px;
+  width: 88%;
+  animation: popupBounce 0.35s cubic-bezier(.34,1.56,.64,1);
+}
+.edit-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: var(--clr-text);
+}
+.edit-card .form-group { margin-bottom: 10px; }
+.edit-card .edit-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+.edit-card .edit-actions .btn { flex: 1; }
+.btn-secondary {
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  border: 1.5px solid var(--clr-border);
+}
+
+/* ===== Undo Toast ===== */
+.toast .undo-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.5);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 3px 12px;
+  border-radius: 14px;
+  margin-left: 10px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* ===== Date Group Header ===== */
+.txn-date-group {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--clr-muted);
+  padding: 10px 0 4px;
+  border-bottom: 1px solid var(--clr-border);
+  margin-bottom: 6px;
+}
+
+/* ===== Edit icon on txn card ===== */
+.txn-edit-btn {
+  background: none;
+  border: none;
+  color: var(--clr-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: color var(--transition), background var(--transition);
+  flex-shrink: 0;
+  touch-action: manipulation;
+}
+.txn-edit-btn:active {
+  color: var(--clr-primary);
+  background: rgba(33,150,243,0.1);
+}
+
+/* ===== Profile Edit Icon ===== */
+.icon-btn.edit {
+  background: rgba(33,150,243,0.1);
+  color: var(--clr-primary);
+}
+.icon-btn.edit:hover {
+  background: var(--clr-primary);
+  color: #fff;
+}
+
+/* ===== CSV Export Button ===== */
+.modal-header .csv-btn {
+  background: rgba(255,255,255,0.2);
+  border: 1.5px solid rgba(255,255,255,0.4);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  margin-left: 6px;
+  transition: background var(--transition);
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+.modal-header .csv-btn:active { background: rgba(255,255,255,0.35); }
+
+/* ===== Profile card edit name on header ===== */
+.app-header { position: sticky; /* ensure relative for toggle */ position: relative; }
+.app-header { position: sticky; top: 0; }
+
+/* ===== Help Button ===== */
+.help-toggle {
+  position: absolute;
+  top: 16px;
+  right: 60px;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition);
+  touch-action: manipulation;
+}
+.help-toggle:active { background: rgba(255,255,255,0.35); }
+
+/* ===== Help Modal ===== */
+.help-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: var(--clr-bg);
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.3s cubic-bezier(.4,0,.2,1);
+}
+.help-overlay.hidden { display: none; }
+
+.help-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background: var(--clr-primary-gradient);
+  color: #fff;
+  gap: 8px;
+}
+.help-header h2 {
+  flex: 1;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.help-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.help-section {
+  margin-bottom: 20px;
+}
+.help-section h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--clr-primary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.help-section h3 .help-emoji {
+  font-size: 1.2rem;
+}
+.help-section p,
+.help-section li {
+  font-size: 0.88rem;
+  color: var(--clr-text);
+  line-height: 1.6;
+}
+.help-section ul {
+  list-style: none;
+  padding: 0;
+}
+.help-section li {
+  padding: 4px 0 4px 20px;
+  position: relative;
+}
+.help-section li::before {
+  content: '\2022';
+  color: var(--clr-primary);
+  font-weight: 700;
+  position: absolute;
+  left: 4px;
+}
+.help-divider {
+  height: 1px;
+  background: var(--clr-border);
+  margin: 16px 0;
+}
+.help-kbd {
+  display: inline-block;
+  background: var(--clr-bg);
+  border: 1px solid var(--clr-border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.8rem;
+  font-family: monospace;
+  color: var(--clr-text);
+}
+.help-version {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--clr-muted);
+  padding: 16px 0 calc(16px + var(--safe-bottom));
+}
+</style>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <h1>MoneyMemo</h1>
+    <p class="app-tagline">Track what's owed, simply.</p>
+    <button id="helpToggle" class="help-toggle" title="Help">?</button>
+    <button id="themeToggle" class="theme-toggle" title="Toggle dark mode">&#9790;</button>
+  </header>
+
+  <!-- Summary Bar -->
+  <section class="summary-bar">
+    <div class="summary-item">
+      <span class="summary-label">Total Owed to You</span>
+      <span class="summary-value positive" id="totalOwed">&#8377;0</span>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-item">
+      <span class="summary-label">You Owe</span>
+      <span class="summary-value negative" id="totalYouOwe">&#8377;0</span>
+    </div>
+  </section>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <!-- Net Balance -->
+  <div class="summary-net" id="netBalanceLine"></div>
+
+  <!-- Success Popup Overlay -->
+  <div id="successPopup" class="success-popup hidden" aria-live="assertive">
+    <div class="success-popup-card">
+      <div class="success-icon">&#10003;</div>
+      <h3 id="successTitle">Transaction Added!</h3>
+      <p id="successDetail"></p>
+    </div>
+  </div>
+
+  <!-- Add Profile Section -->
+  <section class="add-profile-section">
+    <input
+      type="text"
+      id="profileNameInput"
+      placeholder="Enter profile name"
+      maxlength="50"
+      autocomplete="off"
+    />
+    <button id="addProfileBtn" class="btn btn-primary">
+      <span class="btn-icon">+</span> Add
+    </button>
+  </section>
+
+  <!-- Data Management Bar -->
+  <section class="data-bar">
+    <button id="exportBtn" class="btn btn-sm btn-outline" title="Download data as JSON">&#128190; Export</button>
+    <button id="importBtn" class="btn btn-sm btn-outline" title="Load data from a JSON file">&#128194; Import</button>
+    <button id="resetBtn" class="btn btn-sm btn-outline" title="Reset to seed data">&#128260; Reset</button>
+    <input type="file" id="importInput" accept=".json" hidden />
+  </section>
+
+  <!-- Dashboard -->
+  <main id="dashboard" class="dashboard"></main>
+
+  <!-- Profile Modal -->
+  <div id="profileModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button id="closeModalBtn" class="btn-back" aria-label="Back">&#8592;</button>
+        <h2 id="modalProfileName"></h2>
+        <span class="modal-balance" id="modalBalance"></span>
+        <button id="settleBtn" class="settle-btn" title="Settle up">Settle</button>
+        <button id="csvExportBtn" class="csv-btn" title="Export CSV">CSV</button>
+      </div>
+
+      <!-- Search, Filter, Sort -->
+      <div class="search-filter-bar">
+        <input type="text" id="txnSearch" placeholder="Search notes..." autocomplete="off" />
+        <select id="txnFilter">
+          <option value="all">All</option>
+          <option value="sent">Sent</option>
+          <option value="received">Received</option>
+        </select>
+        <button class="sort-btn" id="txnSortBtn" title="Sort">&#8645; Date</button>
+      </div>
+
+      <!-- Transaction List -->
+      <div class="txn-list-wrap" id="txnListWrap">
+        <div id="transactionList" class="txn-list"></div>
+      </div>
+
+      <!-- Add Transaction Form -->
+      <form id="addTransactionForm" class="transaction-form" autocomplete="off">
+        <div class="form-row">
+          <div class="form-group type-group">
+            <label for="txnType">Type</label>
+            <select id="txnType" required>
+              <option value="sent">Sent</option>
+              <option value="received">Received</option>
+            </select>
+          </div>
+          <div class="form-group amount-group">
+            <label for="txnAmountDisplay">Amount (&#8377;)</label>
+            <input
+              type="text"
+              id="txnAmountDisplay"
+              inputmode="numeric"
+              placeholder="0"
+              required
+            />
+            <input type="hidden" id="txnAmount" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="txnNote">Note</label>
+          <input
+            type="text"
+            id="txnNote"
+            placeholder="e.g. Loan, Groceries"
+            maxlength="100"
+          />
+        </div>
+        <div class="form-group">
+          <label for="txnDate">Date</label>
+          <input
+            type="date"
+            id="txnDate"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">
+          Add Transaction
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loader" class="loader hidden">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Edit Overlay (reusable) -->
+  <div id="editOverlay" class="edit-overlay hidden"></div>
+
+  <!-- Help Overlay -->
+  <div id="helpOverlay" class="help-overlay hidden">
+    <div class="help-header">
+      <button id="helpCloseBtn" class="btn-back" aria-label="Close help">&#8592;</button>
+      <h2>Help &amp; Guide</h2>
+    </div>
+    <div class="help-body">
+
+      <div class="help-section">
+        <h3><span class="help-emoji">&#128203;</span> What is MoneyMemo?</h3>
+        <p>MoneyMemo is a personal ledger to track money you've sent to or received from people. It works entirely in your browser &mdash; no account needed, no data leaves your device.</p>
+      </div>
+
+      <div class="help-divider"></div>
+
+      <div class="help-section">
+        <h3><span class="help-emoji">&#128100;</span> Profiles</h3>
+        <ul>
+          <li>A <strong>profile</strong> represents a person (e.g. Dad, Friend, Vendor).</li>
+          <li>Type a name and tap <strong>+ Add</strong> to create one.</li>
+          <li>Tap the <strong>&#9998; pencil</strong> icon on a card to rename it.</li>
+          <li>Tap the <strong>&#128465; bin</strong> icon to delete (with undo).</li>
+          <li>Duplicate names are blocked automatically.</li>
+        </ul>
+      </div>
+
+      <div class="help-divider"></div>
+
+      <div class="help-section">
+        <h3><span class="help-emoji">&#128176;</span> Transactions</h3>
+        <ul>
+          <li>Tap a profile card to open its transaction ledger.</li>
+          <li><strong>Sent</strong> = money you gave them (they owe you).</li>
+          <li><strong>Received</strong> = money they gave you (reduces what they owe).</li>
+          <li>The <strong>balance</strong> shown is: total sent &minus; total received.</li>
+          <li>Use the <strong>date picker</strong> to backdate a transaction.</li>
+          <li>Tap &#9998; to <strong>edit</strong> any transaction (type, amount, note, date).</li>
+          <li>Tap &#128465; to <strong>delete</strong> — an <strong>Undo</strong> button appears for 5 seconds.</li>
+        </ul>
+      </div>
+
+      <div class="help-divider"></div>
+
+      <div class="help-section">
+        <h3><span class="help-emoji">&#128269;</span> Search, Filter &amp; Sort</h3>
+        <ul>
+          <li><strong>Search</strong> — type in the search box to filter transactions by note.</li>
+          <li><strong>Filter</strong> — use the dropdown to show only Sent or Received.</li>
+          <li><strong>Sort</strong> — tap the Date button to toggle newest-first / oldest-first.</li>
+        </ul>
+      </div>
+
+      <div class="help-divider"></div>
+
+      <div class="help-section">
+        <h3><span class="help-emoji">&#9989;</span> Settle Up</h3>
+        <p>Tap the <strong>Settle</strong> button in a profile's header to zero out the balance. This adds a single offsetting transaction automatically.</p>
+      </div>
+
+      <div class="help-divider"></div>
+
+      <div class="help-section">
+        <h3><span class="help-emoji">&#128190;</span> Data Management</h3>
+        <ul>
+          <li><strong>Export</strong> — downloads all data as a <span class="help-kbd">data.json</span> file.</li>
+          <li><strong>Import</strong> — loads data from a previously exported JSON file.</li>
+          <li><strong>Reset</strong> — restores the built-in seed data (with confirmation).</li>
+          <li><strong>CSV</strong> — inside a profile, tap CSV to export that profile's transactions as a spreadsheet-friendly file.</li>
+        </ul>
+      </div>
+
+      <div class="help-divider"></div>
+
+      <div class="help-section">
+        <h3><span class="help-emoji">&#127769;</span> Dark Mode</h3>
+        <p>Tap the moon/sun icon in the top-right corner to toggle dark mode. Your preference is saved automatically.</p>
+      </div>
+
+      <div class="help-divider"></div>
+
+      <div class="help-section">
+        <h3><span class="help-emoji">&#128274;</span> Privacy</h3>
+        <p>All data is stored in your browser's <strong>localStorage</strong>. Nothing is sent to any server. Clearing browser data will erase everything &mdash; use Export to keep a backup.</p>
+      </div>
+
+      <div class="help-version">MoneyMemo v1.0</div>
+    </div>
+  </div>
+
+<script>
+// ============================================================
+// MoneyMemo – Standalone single-file app
+// ============================================================
+
+// ---------- Seed data (embedded) ----------
+// Edit this object to set initial data when moving to a new device.
+// On first load (no localStorage), this seed data is used.
+var SEED_DATA = {
+  "profiles": [
+    {
+      "id": "1774370664675",
+      "name": "Dad"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "1774393944352",
+      "profileId": "1774370664675",
+      "date": "25-03-2026",
+      "type": "sent",
+      "amount": 80000,
+      "note": "My Savings"
+    },
+    {
+      "id": "1774393963461",
+      "profileId": "1774370664675",
+      "date": "25-03-2026",
+      "type": "sent",
+      "amount": 17242,
+      "note": "JAN | Coconut Profit"
+    },
+    {
+      "id": "1774394004272",
+      "profileId": "1774370664675",
+      "date": "25-03-2026",
+      "type": "received",
+      "amount": 60000,
+      "note": "For AB Insurance"
+    },
+    {
+      "id": "1774394019522",
+      "profileId": "1774370664675",
+      "date": "25-03-2026",
+      "type": "sent",
+      "amount": 21810,
+      "note": "AB Insurance recived Back"
+    }
+  ]
+};
+
+// ---------- Storage key ----------
+var STORAGE_KEY = "moneymemo_data";
+
+// ---------- DOM references ----------
+var $ = function(sel) { return document.querySelector(sel); };
+var dashboard        = $("#dashboard");
+var profileInput     = $("#profileNameInput");
+var addProfileBtn    = $("#addProfileBtn");
+var modal            = $("#profileModal");
+var modalName        = $("#modalProfileName");
+var modalBalance     = $("#modalBalance");
+var closeModalBtn    = $("#closeModalBtn");
+var txnList          = $("#transactionList");
+var txnForm          = $("#addTransactionForm");
+var txnType          = $("#txnType");
+var txnAmountDisplay = $("#txnAmountDisplay");
+var txnAmountHidden  = $("#txnAmount");
+var txnNote          = $("#txnNote");
+var toastEl          = $("#toast");
+var loader           = $("#loader");
+var totalOwedEl      = $("#totalOwed");
+var totalYouOweEl    = $("#totalYouOwe");
+var successPopup     = $("#successPopup");
+var successTitle     = $("#successTitle");
+var successDetail    = $("#successDetail");
+var editOverlay      = $("#editOverlay");
+var netBalanceLine   = $("#netBalanceLine");
+var txnSearch        = null;
+var txnFilter        = null;
+var txnSortBtn       = null;
+var txnDateInput     = null;
+
+// ---------- App state ----------
+var profiles     = [];
+var transactions = [];
+var activeProfileId = null;
+var txnSortOrder = "desc"; // "desc" = newest first, "asc" = oldest first
+var undoStack    = null; // { type, data, timer }
+
+// ---------- Avatar colors ----------
+var AVATAR_COLORS = [
+  "#2196F3", "#0891b2", "#059669", "#F59E0B",
+  "#EF4444", "#0EA5E9", "#EC4899", "#1565C0",
+];
+
+// ============================================================
+// Startup
+// ============================================================
+document.addEventListener("DOMContentLoaded", function() {
+  loadData();
+  bindEvents();
+});
+
+// ============================================================
+// Event bindings
+// ============================================================
+function bindEvents() {
+  addProfileBtn.addEventListener("click", handleAddProfile);
+  profileInput.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") handleAddProfile();
+  });
+  closeModalBtn.addEventListener("click", closeModal);
+  txnForm.addEventListener("submit", handleAddTransaction);
+
+  // Export
+  var exportBtn = $("#exportBtn");
+  if (exportBtn) exportBtn.addEventListener("click", exportData);
+
+  // Import
+  var importInput = $("#importInput");
+  var importBtn   = $("#importBtn");
+  if (importBtn && importInput) {
+    importBtn.addEventListener("click", function() { importInput.click(); });
+    importInput.addEventListener("change", function(e) {
+      if (e.target.files[0]) importData(e.target.files[0]);
+      e.target.value = "";
+    });
+  }
+
+  // Reset to seed data
+  var resetBtn = $("#resetBtn");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", function() {
+      if (!confirm("Reset to seed data? This will replace your current data.")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      loadData();
+      showToast("Data reset to seed");
+    });
+  }
+
+  // Live-format amount with Indian commas
+  txnAmountDisplay.addEventListener("input", function() {
+    var raw = txnAmountDisplay.value.replace(/[^0-9.]/g, "");
+    var num = parseFloat(raw);
+    txnAmountHidden.value = raw;
+    if (!raw || isNaN(num)) {
+      txnAmountDisplay.value = "";
+      return;
+    }
+    var parts = raw.split(".");
+    parts[0] = formatIndianCommas(parts[0]);
+    txnAmountDisplay.value = parts.join(".");
+  });
+
+  // Dark mode toggle
+  var themeToggle = $("#themeToggle");
+  if (themeToggle) {
+    themeToggle.addEventListener("click", function() {
+      document.body.classList.toggle("dark-mode");
+      var isDark = document.body.classList.contains("dark-mode");
+      localStorage.setItem("moneymemo_theme", isDark ? "dark" : "light");
+      themeToggle.innerHTML = isDark ? "&#9788;" : "&#9790;";
+    });
+    // Restore saved theme
+    if (localStorage.getItem("moneymemo_theme") === "dark") {
+      document.body.classList.add("dark-mode");
+      themeToggle.innerHTML = "&#9788;";
+    }
+  }
+
+  // Search, filter, sort in modal
+  txnSearch  = $("#txnSearch");
+  txnFilter  = $("#txnFilter");
+  txnSortBtn = $("#txnSortBtn");
+  txnDateInput = $("#txnDate");
+
+  if (txnSearch) txnSearch.addEventListener("input", function() { if (activeProfileId) renderModal(activeProfileId); });
+  if (txnFilter) txnFilter.addEventListener("change", function() { if (activeProfileId) renderModal(activeProfileId); });
+  if (txnSortBtn) txnSortBtn.addEventListener("click", function() {
+    txnSortOrder = txnSortOrder === "desc" ? "asc" : "desc";
+    txnSortBtn.innerHTML = txnSortOrder === "desc" ? "&#8645; Date &darr;" : "&#8645; Date &uarr;";
+    if (activeProfileId) renderModal(activeProfileId);
+  });
+
+  // Settle up
+  var settleBtn = $("#settleBtn");
+  if (settleBtn) settleBtn.addEventListener("click", handleSettle);
+
+  // CSV export
+  var csvBtn = $("#csvExportBtn");
+  if (csvBtn) csvBtn.addEventListener("click", handleCsvExport);
+
+  // Set default date to today
+  if (txnDateInput) {
+    var today = new Date();
+    txnDateInput.value = today.getFullYear() + "-" + String(today.getMonth()+1).padStart(2,"0") + "-" + String(today.getDate()).padStart(2,"0");
+  }
+
+  // Help overlay
+  var helpToggle  = $("#helpToggle");
+  var helpOverlay = $("#helpOverlay");
+  var helpCloseBtn = $("#helpCloseBtn");
+  if (helpToggle && helpOverlay) {
+    helpToggle.addEventListener("click", function() { helpOverlay.classList.remove("hidden"); });
+    helpCloseBtn.addEventListener("click", function() { helpOverlay.classList.add("hidden"); });
+  }
+}
+
+// ============================================================
+// Data loading & persistence
+// ============================================================
+
+function loadData() {
+  showLoader();
+  try {
+    var stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      var data = JSON.parse(stored);
+      profiles     = data.profiles || [];
+      transactions = data.transactions || [];
+    } else {
+      // First load → use embedded seed data
+      profiles     = JSON.parse(JSON.stringify(SEED_DATA.profiles || []));
+      transactions = JSON.parse(JSON.stringify(SEED_DATA.transactions || []));
+      saveToLocalStorage();
+    }
+    renderDashboard();
+    renderSummaryBar();
+    if (activeProfileId !== null) renderModal(activeProfileId);
+  } catch (err) {
+    console.error("Failed to load data:", err);
+    showToast("Failed to load data");
+  } finally {
+    hideLoader();
+  }
+}
+
+function saveToLocalStorage() {
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({ profiles: profiles, transactions: transactions })
+  );
+}
+
+function exportData() {
+  var blob = new Blob(
+    [JSON.stringify({ profiles: profiles, transactions: transactions }, null, 2)],
+    { type: "application/json" }
+  );
+  var url = URL.createObjectURL(blob);
+  var a   = document.createElement("a");
+  a.href     = url;
+  a.download = "data.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("Data exported as data.json");
+}
+
+function importData(file) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      profiles     = Array.isArray(data.profiles) ? data.profiles : [];
+      transactions = Array.isArray(data.transactions) ? data.transactions : [];
+      saveToLocalStorage();
+      renderDashboard();
+      renderSummaryBar();
+      showToast("Data imported successfully");
+    } catch(err) {
+      showToast("Invalid JSON file");
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ============================================================
+// Helpers
+// ============================================================
+
+function toNum(v) {
+  var n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function calcBalance(profileId) {
+  var pid = String(profileId);
+  return transactions
+    .filter(function(t) { return String(t.profileId) === pid; })
+    .reduce(function(sum, t) {
+      if (t.type === "sent") return sum + t.amount;
+      if (t.type === "received") return sum - t.amount;
+      return sum;
+    }, 0);
+}
+
+function formatIndianCommas(numStr) {
+  numStr = numStr.replace(/^0+(?=\d)/, "");
+  if (numStr.length <= 3) return numStr;
+  var last3 = numStr.slice(-3);
+  var rest  = numStr.slice(0, -3);
+  var withCommas = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+  return withCommas + "," + last3;
+}
+
+function formatCurrency(n) {
+  var abs = Math.abs(n);
+  var intPart = Math.floor(abs);
+  var decPart = abs - intPart;
+  var formatted = "\u20B9" + formatIndianCommas(String(intPart));
+  if (decPart > 0) {
+    formatted += "." + decPart.toFixed(2).slice(2);
+  }
+  return n < 0 ? "-" + formatted : formatted;
+}
+
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function escapeHtml(str) {
+  var div = document.createElement("div");
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+
+function escapeAttr(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function getAvatarColor(name) {
+  var hash = 0;
+  for (var i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+}
+
+function parseDateStr(dateStr) {
+  // Parse dd-mm-yyyy to Date
+  var parts = String(dateStr).split("-");
+  if (parts.length === 3) {
+    return new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0])).getTime();
+  }
+  return 0;
+}
+
+// ============================================================
+// Rendering
+// ============================================================
+
+function renderSummaryBar() {
+  var owedToYou = 0;
+  var youOwe = 0;
+  profiles.forEach(function(p) {
+    var bal = calcBalance(p.id);
+    if (bal > 0) owedToYou += bal;
+    else if (bal < 0) youOwe += Math.abs(bal);
+  });
+  totalOwedEl.textContent = formatCurrency(owedToYou);
+  totalYouOweEl.textContent = formatCurrency(youOwe);
+
+  // Net balance
+  var net = owedToYou - youOwe;
+  var netClass = net > 0 ? "positive" : net < 0 ? "negative" : "zero";
+  netBalanceLine.innerHTML = 'Net: <span class="' + netClass + '">' + formatCurrency(net) + '</span>';
+}
+
+function renderDashboard() {
+  if (profiles.length === 0) {
+    dashboard.innerHTML =
+      '<div class="dashboard-empty">' +
+        '<span class="empty-icon">\uD83D\uDCD2</span>' +
+        'No profiles yet. Add one above!' +
+      '</div>';
+    return;
+  }
+
+  dashboard.innerHTML = profiles
+    .map(function(p, i) {
+      var bal = calcBalance(p.id);
+      var balClass = bal > 0 ? "positive" : bal < 0 ? "negative" : "zero";
+      var formatted = formatCurrency(bal);
+      var initials = p.name.charAt(0).toUpperCase();
+      var color = getAvatarColor(p.name);
+      return '<div class="profile-card" style="animation-delay:' + (i * 0.05) + 's" data-open="' + escapeAttr(p.id) + '">' +
+          '<div class="profile-avatar" style="background:' + color + '">' + initials + '</div>' +
+          '<div class="info">' +
+            '<div class="name">' + escapeHtml(p.name) + '</div>' +
+            '<div class="balance ' + balClass + '">' + formatted + '</div>' +
+          '</div>' +
+          '<div class="card-actions">' +
+            '<button class="icon-btn edit" data-id="' + escapeAttr(p.id) + '" title="Edit">&#9998;</button>' +
+            '<button class="icon-btn delete" data-id="' + escapeAttr(p.id) + '" title="Delete">&#128465;</button>' +
+          '</div>' +
+        '</div>';
+    })
+    .join("");
+
+  dashboard.querySelectorAll(".profile-card").forEach(function(card) {
+    card.addEventListener("click", function(e) {
+      if (e.target.closest(".icon-btn.delete")) return;
+      openModal(card.dataset.open);
+    });
+  });
+
+  dashboard.querySelectorAll(".icon-btn.delete").forEach(function(btn) {
+    btn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      handleDeleteProfile(btn.dataset.id);
+    });
+  });
+
+  dashboard.querySelectorAll(".icon-btn.edit").forEach(function(btn) {
+    btn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      handleEditProfile(btn.dataset.id);
+    });
+  });
+}
+
+function renderModal(profileId) {
+  var pid  = String(profileId);
+  var prof = profiles.find(function(p) { return String(p.id) === pid; });
+  if (!prof) return;
+
+  modalName.textContent = prof.name;
+
+  var bal = calcBalance(pid);
+  modalBalance.textContent = formatCurrency(bal);
+  modalBalance.className = "modal-balance " + (bal > 0 ? "positive" : bal < 0 ? "negative" : "zero");
+
+  var txns = transactions.filter(function(t) { return String(t.profileId) === pid; });
+
+  // Apply filter
+  var filterVal = txnFilter ? txnFilter.value : "all";
+  if (filterVal !== "all") {
+    txns = txns.filter(function(t) { return t.type === filterVal; });
+  }
+
+  // Apply search
+  var searchVal = txnSearch ? txnSearch.value.trim().toLowerCase() : "";
+  if (searchVal) {
+    txns = txns.filter(function(t) {
+      return (t.note || "").toLowerCase().indexOf(searchVal) !== -1;
+    });
+  }
+
+  // Sort by date
+  txns.sort(function(a, b) {
+    var da = parseDateStr(a.date);
+    var db = parseDateStr(b.date);
+    return txnSortOrder === "desc" ? db - da : da - db;
+  });
+
+  if (txns.length === 0) {
+    txnList.innerHTML =
+      '<div class="no-transactions">' +
+        '<span class="empty-txn-icon">\uD83D\uDCCB</span>' +
+        (searchVal || filterVal !== "all" ? 'No matching transactions' : 'No transactions yet') +
+      '</div>';
+    return;
+  }
+
+  // Group by date
+  var grouped = [];
+  var lastDate = "";
+  txns.forEach(function(t, i) {
+    if (t.date !== lastDate) {
+      grouped.push('<div class="txn-date-group">' + escapeHtml(t.date) + '</div>');
+      lastDate = t.date;
+    }
+    grouped.push(
+      '<div class="txn-card" style="animation-delay:' + (i * 0.04) + 's">' +
+        '<div class="txn-type-dot ' + t.type + '"></div>' +
+        '<div class="txn-info">' +
+          '<div class="txn-top-row">' +
+            '<span class="txn-type-label ' + t.type + '">' + capitalize(t.type) + '</span>' +
+            '<span class="txn-amount">' + formatCurrency(t.amount) + '</span>' +
+          '</div>' +
+          '<div class="txn-bottom-row">' +
+            '<span class="txn-note">' + escapeHtml(t.note || "\u2014") + '</span>' +
+            '<span class="txn-date">' + escapeHtml(t.date) + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<button class="txn-edit-btn" data-id="' + escapeAttr(t.id) + '" title="Edit">&#9998;</button>' +
+        '<button class="txn-delete-btn" data-id="' + escapeAttr(t.id) + '" title="Delete">&#128465;</button>' +
+      '</div>'
+    );
+  });
+
+  txnList.innerHTML = grouped.join("");
+
+  txnList.querySelectorAll(".txn-edit-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() { handleEditTransaction(btn.dataset.id); });
+  });
+
+  txnList.querySelectorAll(".txn-delete-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() { handleDeleteTransaction(btn.dataset.id); });
+  });
+}
+
+// ============================================================
+// Modal helpers
+// ============================================================
+function openModal(profileId) {
+  activeProfileId = String(profileId);
+  renderModal(activeProfileId);
+  modal.classList.remove("hidden");
+}
+
+function closeModal() {
+  modal.classList.add("hidden");
+  activeProfileId = null;
+  txnForm.reset();
+  txnAmountDisplay.value = "";
+  txnAmountHidden.value = "";
+  if (txnSearch) txnSearch.value = "";
+  if (txnFilter) txnFilter.value = "all";
+  if (txnDateInput) {
+    var today = new Date();
+    txnDateInput.value = today.getFullYear() + "-" + String(today.getMonth()+1).padStart(2,"0") + "-" + String(today.getDate()).padStart(2,"0");
+  }
+}
+
+// ============================================================
+// Success Popup
+// ============================================================
+function showSuccessPopup(title, detail) {
+  successTitle.textContent = title;
+  successDetail.textContent = detail || "";
+  successPopup.classList.remove("hidden");
+  setTimeout(function() {
+    successPopup.classList.add("hidden");
+    closeModal();
+  }, 1500);
+}
+
+// ============================================================
+// Action handlers
+// ============================================================
+
+function handleAddProfile() {
+  var name = profileInput.value.trim();
+  if (!name) {
+    showToast("Please enter a profile name");
+    return;
+  }
+
+  // Duplicate check
+  var nameLower = name.toLowerCase();
+  var exists = profiles.some(function(p) { return p.name.toLowerCase() === nameLower; });
+  if (exists) {
+    showToast("Profile '" + name + "' already exists");
+    return;
+  }
+
+  profiles.push({ id: String(Date.now()), name: name });
+  saveToLocalStorage();
+  profileInput.value = "";
+  showToast("Profile created");
+  renderDashboard();
+  renderSummaryBar();
+}
+
+function handleAddTransaction(e) {
+  e.preventDefault();
+
+  var rawAmount = txnAmountHidden.value || txnAmountDisplay.value.replace(/[^0-9.]/g, "");
+  var amount = toNum(rawAmount);
+  if (amount <= 0) {
+    showToast("Enter a valid amount");
+    return;
+  }
+
+  var typeVal = txnType.value;
+  var noteVal = txnNote.value.trim();
+
+  // Use date picker value or default to today
+  var dateVal;
+  if (txnDateInput && txnDateInput.value) {
+    var dp = txnDateInput.value.split("-"); // yyyy-mm-dd
+    dateVal = dp[2] + "-" + dp[1] + "-" + dp[0]; // dd-mm-yyyy
+  } else {
+    var now = new Date();
+    var dd = String(now.getDate()).padStart(2, "0");
+    var mm = String(now.getMonth() + 1).padStart(2, "0");
+    var yyyy = now.getFullYear();
+    dateVal = dd + "-" + mm + "-" + yyyy;
+  }
+
+  transactions.push({
+    id: String(Date.now()),
+    profileId: activeProfileId,
+    date: dateVal,
+    type: typeVal,
+    amount: amount,
+    note: noteVal,
+  });
+  saveToLocalStorage();
+
+  txnForm.reset();
+  txnAmountDisplay.value = "";
+  txnAmountHidden.value = "";
+
+  showSuccessPopup(
+    "Transaction Added!",
+    capitalize(typeVal) + " " + formatCurrency(amount)
+  );
+  renderDashboard();
+  renderSummaryBar();
+}
+
+function handleDeleteTransaction(txnId) {
+  var txn = transactions.find(function(t) { return t.id === txnId; });
+  if (!txn) return;
+
+  transactions = transactions.filter(function(t) { return t.id !== txnId; });
+  saveToLocalStorage();
+  renderModal(activeProfileId);
+  renderDashboard();
+  renderSummaryBar();
+
+  // Undo support
+  showUndoToast("Transaction deleted", function() {
+    transactions.push(txn);
+    saveToLocalStorage();
+    renderModal(activeProfileId);
+    renderDashboard();
+    renderSummaryBar();
+  });
+}
+
+function handleDeleteProfile(profileId) {
+  if (!confirm("Delete this profile and all its transactions?")) return;
+
+  var deletedProfile = profiles.find(function(p) { return p.id === profileId; });
+  var deletedTxns = transactions.filter(function(t) { return t.profileId === profileId; });
+
+  profiles     = profiles.filter(function(p) { return p.id !== profileId; });
+  transactions = transactions.filter(function(t) { return t.profileId !== profileId; });
+  saveToLocalStorage();
+  renderDashboard();
+  renderSummaryBar();
+
+  showUndoToast("Profile deleted", function() {
+    profiles.push(deletedProfile);
+    transactions = transactions.concat(deletedTxns);
+    saveToLocalStorage();
+    renderDashboard();
+    renderSummaryBar();
+  });
+}
+
+// ============================================================
+// Edit handlers
+// ============================================================
+
+function handleEditProfile(profileId) {
+  var prof = profiles.find(function(p) { return p.id === profileId; });
+  if (!prof) return;
+
+  editOverlay.innerHTML =
+    '<div class="edit-card">' +
+      '<h3>Edit Profile</h3>' +
+      '<div class="form-group">' +
+        '<label>Name</label>' +
+        '<input type="text" id="editProfileName" value="' + escapeAttr(prof.name) + '" maxlength="50" style="padding:12px 14px;border:2px solid var(--clr-border);border-radius:var(--radius-sm);font-size:1rem;outline:none;width:100%;background:var(--clr-bg);color:var(--clr-text);" />' +
+      '</div>' +
+      '<div class="edit-actions">' +
+        '<button class="btn btn-secondary" id="editCancelBtn">Cancel</button>' +
+        '<button class="btn btn-primary" id="editSaveBtn">Save</button>' +
+      '</div>' +
+    '</div>';
+  editOverlay.classList.remove("hidden");
+
+  $("#editCancelBtn").addEventListener("click", function() { editOverlay.classList.add("hidden"); });
+  $("#editSaveBtn").addEventListener("click", function() {
+    var newName = $("#editProfileName").value.trim();
+    if (!newName) { showToast("Name cannot be empty"); return; }
+    var nameLower = newName.toLowerCase();
+    var dup = profiles.some(function(p) { return p.id !== profileId && p.name.toLowerCase() === nameLower; });
+    if (dup) { showToast("Profile '" + newName + "' already exists"); return; }
+    prof.name = newName;
+    saveToLocalStorage();
+    editOverlay.classList.add("hidden");
+    showToast("Profile updated");
+    renderDashboard();
+    renderSummaryBar();
+  });
+}
+
+function handleEditTransaction(txnId) {
+  var txn = transactions.find(function(t) { return t.id === txnId; });
+  if (!txn) return;
+
+  // Convert dd-mm-yyyy to yyyy-mm-dd for date input
+  var dateParts = txn.date.split("-");
+  var dateInputVal = dateParts.length === 3 ? (dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]) : "";
+
+  editOverlay.innerHTML =
+    '<div class="edit-card">' +
+      '<h3>Edit Transaction</h3>' +
+      '<div class="form-group">' +
+        '<label>Type</label>' +
+        '<select id="editTxnType" style="padding:12px 14px;border:2px solid var(--clr-border);border-radius:var(--radius-sm);font-size:1rem;width:100%;background:var(--clr-bg);color:var(--clr-text);">' +
+          '<option value="sent"' + (txn.type === "sent" ? " selected" : "") + '>Sent</option>' +
+          '<option value="received"' + (txn.type === "received" ? " selected" : "") + '>Received</option>' +
+        '</select>' +
+      '</div>' +
+      '<div class="form-group">' +
+        '<label>Amount (₹)</label>' +
+        '<input type="text" id="editTxnAmount" inputmode="numeric" value="' + escapeAttr(formatIndianCommas(String(txn.amount))) + '" style="padding:12px 14px;border:2px solid var(--clr-border);border-radius:var(--radius-sm);font-size:1rem;width:100%;background:var(--clr-bg);color:var(--clr-text);" />' +
+      '</div>' +
+      '<div class="form-group">' +
+        '<label>Note</label>' +
+        '<input type="text" id="editTxnNote" value="' + escapeAttr(txn.note || "") + '" maxlength="100" style="padding:12px 14px;border:2px solid var(--clr-border);border-radius:var(--radius-sm);font-size:1rem;width:100%;background:var(--clr-bg);color:var(--clr-text);" />' +
+      '</div>' +
+      '<div class="form-group">' +
+        '<label>Date</label>' +
+        '<input type="date" id="editTxnDate" value="' + escapeAttr(dateInputVal) + '" style="padding:12px 14px;border:2px solid var(--clr-border);border-radius:var(--radius-sm);font-size:1rem;width:100%;background:var(--clr-bg);color:var(--clr-text);" />' +
+      '</div>' +
+      '<div class="edit-actions">' +
+        '<button class="btn btn-secondary" id="editCancelBtn">Cancel</button>' +
+        '<button class="btn btn-primary" id="editSaveBtn">Save</button>' +
+      '</div>' +
+    '</div>';
+  editOverlay.classList.remove("hidden");
+
+  // Live format amount
+  var editAmtInput = $("#editTxnAmount");
+  editAmtInput.addEventListener("input", function() {
+    var raw = editAmtInput.value.replace(/[^0-9.]/g, "");
+    if (!raw) { editAmtInput.value = ""; return; }
+    var parts = raw.split(".");
+    parts[0] = formatIndianCommas(parts[0]);
+    editAmtInput.value = parts.join(".");
+  });
+
+  $("#editCancelBtn").addEventListener("click", function() { editOverlay.classList.add("hidden"); });
+  $("#editSaveBtn").addEventListener("click", function() {
+    var rawAmt = $("#editTxnAmount").value.replace(/[^0-9.]/g, "");
+    var amt = toNum(rawAmt);
+    if (amt <= 0) { showToast("Enter a valid amount"); return; }
+
+    txn.type = $("#editTxnType").value;
+    txn.amount = amt;
+    txn.note = $("#editTxnNote").value.trim();
+
+    var dp = $("#editTxnDate").value;
+    if (dp) {
+      var parts = dp.split("-");
+      txn.date = parts[2] + "-" + parts[1] + "-" + parts[0];
+    }
+
+    saveToLocalStorage();
+    editOverlay.classList.add("hidden");
+    showToast("Transaction updated");
+    renderModal(activeProfileId);
+    renderDashboard();
+    renderSummaryBar();
+  });
+}
+
+function handleSettle() {
+  if (!activeProfileId) return;
+  var prof = profiles.find(function(p) { return String(p.id) === activeProfileId; });
+  if (!prof) return;
+
+  var bal = calcBalance(activeProfileId);
+  if (bal === 0) {
+    showToast("Already settled!");
+    return;
+  }
+
+  if (!confirm("Settle up with " + prof.name + "? This will add a zeroing transaction.")) return;
+
+  var now = new Date();
+  var dd = String(now.getDate()).padStart(2, "0");
+  var mm = String(now.getMonth() + 1).padStart(2, "0");
+  var yyyy = now.getFullYear();
+
+  transactions.push({
+    id: String(Date.now()),
+    profileId: activeProfileId,
+    date: dd + "-" + mm + "-" + yyyy,
+    type: bal > 0 ? "received" : "sent",
+    amount: Math.abs(bal),
+    note: "Settlement",
+  });
+  saveToLocalStorage();
+
+  showSuccessPopup("Settled Up!", prof.name + " — " + formatCurrency(Math.abs(bal)));
+  renderDashboard();
+  renderSummaryBar();
+}
+
+function handleCsvExport() {
+  if (!activeProfileId) return;
+  var prof = profiles.find(function(p) { return String(p.id) === activeProfileId; });
+  if (!prof) return;
+
+  var txns = transactions.filter(function(t) { return String(t.profileId) === activeProfileId; });
+  var csv = "Date,Type,Amount,Note\n";
+  txns.forEach(function(t) {
+    csv += '"' + t.date + '","' + capitalize(t.type) + '",' + t.amount + ',"' + (t.note || "").replace(/"/g, '""') + '"\n';
+  });
+
+  var blob = new Blob([csv], { type: "text/csv" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = prof.name.replace(/[^a-zA-Z0-9]/g, "_") + "_transactions.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("CSV exported");
+}
+
+// ============================================================
+// UI utilities
+// ============================================================
+
+var toastTimer = null;
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { toastEl.classList.remove("show"); }, 2500);
+}
+
+function showUndoToast(msg, undoFn) {
+  toastEl.innerHTML = "";
+  toastEl.appendChild(document.createTextNode(msg + " "));
+  var btn = document.createElement("button");
+  btn.className = "undo-btn";
+  btn.textContent = "Undo";
+  btn.addEventListener("click", function() {
+    clearTimeout(toastTimer);
+    toastEl.classList.remove("show");
+    undoFn();
+  });
+  toastEl.appendChild(btn);
+  toastEl.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { toastEl.classList.remove("show"); }, 5000);
+}
+
+function showLoader() { loader.classList.remove("hidden"); }
+function hideLoader() { loader.classList.add("hidden"); }
+</script>
+</body>
+</html>
