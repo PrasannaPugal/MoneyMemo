@@ -138,8 +138,8 @@ The app includes embedded seed data in the `SEED_DATA` object inside the HTML fi
 ## File Structure
 
 ```
-flowledger.html         ← The entire MoneyMemo app (single file)
-README-moneymemo.md     ← This documentation
+index.html         ← The entire MoneyMemo app (single file)
+README.md          ← This documentation
 ```
 
 ---
